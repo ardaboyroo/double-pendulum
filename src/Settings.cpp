@@ -36,7 +36,7 @@ void Settings::Init()
 		| FLAG_VSYNC_HINT
 	);
 
-	InitWindow(windowRadius * 2, windowRadius * 2, "Double Pendulum");
+	InitWindow(windowDiameter * 2, windowDiameter * 2, "Double Pendulum");
 	rlImGuiSetup(true);
 
 	Win_EnableLayered(GetWindowHandle());
@@ -52,6 +52,8 @@ void Settings::Init()
 	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.1f, 0.1f, 0.1f, 1);
 	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.2f, 0.2f, 0.2f, 1);
 	style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.15f, 0.15f, 0.15f, 1);
+
+	runOnStartup = IsAppInStartup("DoublePendulum");
 }
 
 void Settings::RenderImgui()
@@ -69,8 +71,23 @@ void Settings::RenderImgui()
 		ImGuiWindowFlags_NoCollapse
 	);
 
-	ImGui::Text(("FPS: " + std::to_string(ImGui::GetIO().Framerate)).c_str());
-	if(ImGui::Button("Exit App")) running = false;
+	//if (ImGui::BeginTabBar("Settings"))
+	//{
+	//	if (ImGui::BeginTabItem("Canvas", ))
+	//	{
+			ImGui::Text(("FPS: " + std::to_string(ImGui::GetIO().Framerate)).c_str());
+	//		ImGui::EndTabItem();
+	//	}
+		if (ImGui::Button("Exit App")) running = false;
+	//	ImGui::EndTabBar();
+	//}
+	if (ImGui::Checkbox("Run on Startup", &runOnStartup))
+	{
+		if (runOnStartup)
+			AddAppToStartup("DoublePendulum");
+		else
+			RemoveAppFromStartup("DoublePendulum");
+	}
 
 	if (ImGui::CollapsingHeader("Pendulum Settings", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed))
 	{
@@ -98,10 +115,10 @@ void Settings::RenderImgui()
 void Settings::SetWindowSize(Vector2 size)
 {
 	std::cout << "Before position: " << GetWindowPosition().x << "  " << GetWindowPosition().y << "\n";
-	std::cout << "Before size: " << windowRadius << "  " << windowRadius << "\n";
+	std::cout << "Before size: " << windowDiameter << "  " << windowDiameter << "\n";
 	Vector2 displayPos = ::GetWindowPosition();
-	Vector2 delta = { size.x - windowRadius, size.y - windowRadius };
-	windowRadius = size.x;
+	Vector2 delta = { size.x - windowDiameter, size.y - windowDiameter };
+	windowDiameter = size.x;
 
 	// Move window first
 	//::SetWindowPosition(displayPos.x - delta.x / 2, displayPos.y - delta.y / 2);

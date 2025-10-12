@@ -34,7 +34,7 @@ public:
 	bool isOpen = false;
 	bool alwaysOnTop = true;
 	int targetFps = 60;
-	float windowRadius = 640.f;
+	float windowDiameter = 640.f;
 
 	// Pendulum Settings
 	float L1 = 150.0f;
@@ -55,5 +55,8 @@ public:
 
 	// ImGui Settings
 	Vector2 settingsSize{500, 500};
+
+private:
+	bool runOnStartup = false;
 };
 

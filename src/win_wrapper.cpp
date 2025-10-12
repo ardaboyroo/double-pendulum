@@ -1,6 +1,7 @@
 #include "win_wrapper.h"
 #include <Windows.h>
 #include <iostream>
+#include <string>
 
 typedef struct Image
 {
@@ -105,4 +106,56 @@ void CustomSetWindowSize(void* hwnd, int width, int height)
 
 	SendMessage((HWND)hwnd, WM_SETREDRAW, TRUE, 0);
 	RedrawWindow((HWND)hwnd, NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
+}
+
+static std::string GetOwnExePath()
+{
+	char path[MAX_PATH];
+	DWORD len = GetModuleFileNameA(nullptr, path, MAX_PATH);
+	return (len > 0) ? std::string(path) : "";
+}
+
+static const char* STARTUP_KEY = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+bool IsAppInStartup(const std::string& appName)
+{
+	HKEY hKey;
+	bool exists = false;
+
+	if (RegOpenKeyExA(HKEY_CURRENT_USER, STARTUP_KEY, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+	{
+		char value[512];
+		DWORD value_length = sizeof(value);
+		DWORD type = REG_SZ;
+
+		if (RegQueryValueExA(hKey,
+			appName.c_str(),
+			nullptr, &type,
+			reinterpret_cast<BYTE*>(value),
+			&value_length
+		) == ERROR_SUCCESS)
+			exists = true;
+
+		RegCloseKey(hKey);
+	}
+
+	return exists;
+}
+
+void AddAppToStartup(const std::string& appName)
+{
+	std::string exePath = GetOwnExePath();
+	if (exePath.empty()) return;
+
+	HKEY hKey;
+	RegOpenKeyExA(HKEY_CURRENT_USER, STARTUP_KEY, 0, KEY_SET_VALUE, &hKey);
+	RegSetValueExA(hKey, appName.c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(exePath.c_str()), static_cast<DWORD>(exePath.size() + 1));
+	RegCloseKey(hKey);
+}
+
+void RemoveAppFromStartup(const std::string& appName)
+{
+	HKEY hKey;
+	RegOpenKeyExA(HKEY_CURRENT_USER, STARTUP_KEY, 0, KEY_SET_VALUE, &hKey);
+	RegDeleteValueA(hKey, appName.c_str());
+	RegCloseKey(hKey);
 }

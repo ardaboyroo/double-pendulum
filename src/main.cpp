@@ -1,4 +1,8 @@
-﻿#include "raylib.h"
+﻿#ifdef NDEBUG
+#pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+#endif
+
+#include "raylib.h"
 #include "raymath.h"
 #include "rlImGui.h"
 #include "imgui.h"
@@ -34,26 +38,26 @@ int main()
 		myPendulum.Update();
 		myPendulum.Draw();
 
-		// Testing... replace with ui button
-		if (IsKeyPressed(KEY_SPACE) || IsMouseDoubleClicked(MOUSE_BUTTON_LEFT) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+		if (IsKeyPressed(KEY_SPACE) || (IsMouseDoubleClicked(MOUSE_BUTTON_LEFT) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) && !s.isOpen)
 			Settings::Get().isOpen = !Settings::Get().isOpen;
+
+		if (sqrt(GetMousePosition().x * (s.windowDiameter / 2.f) + GetMousePosition().y * (s.windowDiameter / 2.f)) <= s.bob1Thick)
+			SetMouseCursor(MOUSE_CURSOR_RESIZE_ALL);
 
 		UpdateDraggableWindow();
 
-		float fullPendulumRadius = s.L1 + s.L2 + s.bob2Thick;
-		float pendulumDiameter = fullPendulumRadius * 2.0f;
-		float windowDiameter = s.windowRadius;
+		float pendulumRadius = s.L1 + s.L2 + s.bob2Thick;
 
-		if (pendulumDiameter + 50.0f > windowDiameter + 40.f)
+		if ((pendulumRadius * 2.f) + 50.0f > s.windowDiameter + 40.f)
 		{
-			// pendulum too big → increase window
-			float radius = std::fmax(s.settingsSize.x / 2.0f, fullPendulumRadius + 25.0f);
+			// pendulum too big -> increase window
+			float radius = std::fmax(s.settingsSize.x / 2.0f, pendulumRadius + 25.0f);
 			s.SetWindowSize({ radius * 2.0f, radius * 2.0f });
 		}
-		else if (windowDiameter - pendulumDiameter > 80.0f)
+		else if (s.windowDiameter - (pendulumRadius * 2.f) > 80.0f && s.windowDiameter > s.settingsSize.x)
 		{
-			// pendulum comfortably smaller → decrease window
-			float radius = std::fmax(s.settingsSize.x / 2.0f, fullPendulumRadius + 25.0f);
+			// pendulum comfortably smaller -> decrease window
+			float radius = std::fmax(s.settingsSize.x / 2.0f, pendulumRadius + 25.0f);
 			s.SetWindowSize({ radius * 2.0f, radius * 2.0f });
 		}
 
