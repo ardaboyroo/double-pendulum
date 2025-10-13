@@ -39,6 +39,8 @@ void Settings::Init()
 	InitWindow(windowDiameter * 2, windowDiameter * 2, "Double Pendulum");
 	rlImGuiSetup(true);
 
+	SetExitKey(0);
+
 	Win_EnableLayered(GetWindowHandle());
 	UpdateCachedFrame(LoadImageFromScreen, UnloadImage);
 	SetWndProc(GetWindowHandle(), (PFN_LoadImgFromScrn)LoadImageFromScreen, (PFN_GetImgClr)GetImageColor, (PFN_UnloadImg)UnloadImage);
@@ -102,6 +104,7 @@ void Settings::RenderImgui()
 
 		ImGui::InputFloat("Bob 1 Thickness", &bob1Thick, 1.0f, 10.0f, "%.1f");
 		ImGui::InputFloat("Bob 2 Thickness", &bob2Thick, 1.0f, 10.0f, "%.1f");
+		ImGui::InputFloat("Bob 3 Thickness", &bob3Thick, 1.0f, 10.0f, "%.1f");
 	}
 
 	if (ImGui::CollapsingHeader("Physics Settings"))

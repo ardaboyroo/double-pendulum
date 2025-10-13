@@ -4,11 +4,11 @@
 #include <iostream>
 
 Pendulum::Pendulum()
-	: a1(Settings::Get().a1), a2(Settings::Get().a2),
-	a1_v(0), a2_v(0), s(Settings::Get())
+	: s(Settings::Get()), 
+	a1(s.a1), a2(s.a2),
+	a1_v(0), a2_v(0)
 {
 }
-
 
 Pendulum::~Pendulum()
 {
@@ -27,14 +27,13 @@ void Pendulum::Update()
 
 void Pendulum::Draw()
 {
-
-	DrawCircle(GetScreenWidth() / 2, GetScreenHeight() / 2, 20, WHITE);
+	DrawCircle(GetScreenWidth() / 2, GetScreenHeight() / 2, s.bob1Thick, WHITE);
 
 	DrawLineEx({ GetScreenWidth() / 2.f, GetScreenHeight() / 2.f }, { (float)x1, (float)y1 }, s.L1Thick, WHITE);
 	DrawLineEx({ (float)x1,(float)y1 }, { (float)x2, (float)y2 }, s.L2Thick, WHITE);
 
-	DrawCircle(x1, y1, s.bob1Thick, DARKBLUE);
-	DrawCircle(x2, y2, s.bob2Thick, DARKGREEN);
+	DrawCircle(x1, y1, s.bob2Thick, DARKBLUE);
+	DrawCircle(x2, y2, s.bob3Thick, DARKGREEN);
 }
 
 void Pendulum::RK4Step(double dt)

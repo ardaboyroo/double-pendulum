@@ -22,6 +22,8 @@ private:
 		double& a1_a, double& a2_a);
 
 private:
+	Settings& s;
+
 	double a1, a2;	// angles of the pendulum bobs
 	double a1_v, a2_v;	// angular velocities of the bobs
 
@@ -29,7 +31,5 @@ private:
 	double x2, y2;
 
 	double L1, L2;
-
-	Settings& s;
 };
 

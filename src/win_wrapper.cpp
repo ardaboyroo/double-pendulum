@@ -118,6 +118,8 @@ static std::string GetOwnExePath()
 static const char* STARTUP_KEY = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
 bool IsAppInStartup(const std::string& appName)
 {
+	// TODO: check if the value of the key matches the exe path
+
 	HKEY hKey;
 	bool exists = false;
 

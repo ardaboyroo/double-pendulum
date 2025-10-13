@@ -24,7 +24,7 @@ int main()
 
 	Pendulum myPendulum;
 
-	float fullPendulumRadius = s.L1 + s.L2 + s.bob2Thick;
+	float fullPendulumRadius = s.L1 + s.L2 + s.bob3Thick;
 	s.SetWindowSize({ fullPendulumRadius * 2, fullPendulumRadius * 2 });
 
 	while (!WindowShouldClose() && s.running)
@@ -38,15 +38,24 @@ int main()
 		myPendulum.Update();
 		myPendulum.Draw();
 
-		if (IsKeyPressed(KEY_SPACE) || (IsMouseDoubleClicked(MOUSE_BUTTON_LEFT) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) && !s.isOpen)
+		if (IsKeyPressed(KEY_SPACE) || (IsMouseDoubleClicked(MOUSE_BUTTON_LEFT) && !s.isOpen) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
 			Settings::Get().isOpen = !Settings::Get().isOpen;
 
-		if (sqrt(GetMousePosition().x * (s.windowDiameter / 2.f) + GetMousePosition().y * (s.windowDiameter / 2.f)) <= s.bob1Thick)
-			SetMouseCursor(MOUSE_CURSOR_RESIZE_ALL);
+		{
+			Vector2 mouse = GetMousePosition();
+			Vector2 center = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
+			Vector2 delta = Vector2Subtract(mouse, center);
+			float distance = sqrtf(delta.x * delta.x + delta.y * delta.y);
+
+			if (distance <= s.bob1Thick && !s.isOpen)
+				SetMouseCursor(MOUSE_CURSOR_RESIZE_ALL);
+			else
+				SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+		}
 
 		UpdateDraggableWindow();
 
-		float pendulumRadius = s.L1 + s.L2 + s.bob2Thick;
+		float pendulumRadius = s.L1 + s.L2 + s.bob3Thick;
 
 		if ((pendulumRadius * 2.f) + 50.0f > s.windowDiameter + 40.f)
 		{
@@ -78,6 +87,8 @@ int main()
 
 void UpdateDraggableWindow()
 {
+	Settings& s = Settings::Get();
+
 	static bool dragging = false;
 	static Vector2 dragOffset = { 0 };
 	static Vector2 startPos = { 0 };
@@ -86,7 +97,7 @@ void UpdateDraggableWindow()
 	Vector2 screenCenter = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
 	float distance = Vector2Distance(mouse, screenCenter);
 
-	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && (!Settings::Get().isOpen && distance <= 20 || mouse.y < GetScreenHeight()/2 - 230))
+	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && (!Settings::Get().isOpen && distance <= s.bob1Thick || mouse.y < GetScreenHeight() / 2 - 230))
 	{
 		Vector2 windowPos = GetWindowPosition();
 		Vector2 mouse = GetMousePosition();

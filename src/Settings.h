@@ -48,6 +48,7 @@ public:
 	float L2Thick = 2.f;
 	float bob1Thick = 20.f;
 	float bob2Thick = 20.f;
+	float bob3Thick = 20.f;
 
 	// Physics settings
 	bool pausePhysics = false;
