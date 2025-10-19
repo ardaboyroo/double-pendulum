@@ -25,7 +25,7 @@ int main()
 	Pendulum myPendulum;
 
 	float fullPendulumRadius = s.L1 + s.L2 + s.bob3Thick;
-	s.SetWindowSize({ fullPendulumRadius * 2, fullPendulumRadius * 2 });
+	s.SetWindowSize(fullPendulumRadius * 2);
 
 	while (!WindowShouldClose() && s.running)
 	{
@@ -56,18 +56,19 @@ int main()
 		UpdateDraggableWindow();
 
 		float pendulumRadius = s.L1 + s.L2 + s.bob3Thick;
-
 		if ((pendulumRadius * 2.f) + 50.0f > s.windowDiameter + 40.f)
 		{
 			// pendulum too big -> increase window
 			float radius = std::fmax(s.settingsSize.x / 2.0f, pendulumRadius + 25.0f);
-			s.SetWindowSize({ radius * 2.0f, radius * 2.0f });
+			s.SetWindowSize(radius * 2.0f);
+			myPendulum.ResizeTrailTexture(radius * 2.f);
 		}
 		else if (s.windowDiameter - (pendulumRadius * 2.f) > 80.0f && s.windowDiameter > s.settingsSize.x)
 		{
 			// pendulum comfortably smaller -> decrease window
 			float radius = std::fmax(s.settingsSize.x / 2.0f, pendulumRadius + 25.0f);
-			s.SetWindowSize({ radius * 2.0f, radius * 2.0f });
+			s.SetWindowSize(radius * 2.0f);
+			myPendulum.ResizeTrailTexture(radius * 2.f);
 		}
 
 		/////////////////

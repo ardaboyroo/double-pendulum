@@ -143,6 +143,7 @@
     <ClCompile Include="src\Settings.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\win_wrapper.cpp" />
+    <ClCompile Include="src\Trail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="raylib_imgui_static\raylib_imgui_static.vcxproj">
@@ -153,6 +154,7 @@
     <ClInclude Include="src\Pendulum.h" />
     <ClInclude Include="src\Settings.h" />
     <ClInclude Include="src\win_wrapper.h" />
+    <ClInclude Include="src\Trail.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

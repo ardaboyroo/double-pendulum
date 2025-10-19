@@ -20,21 +20,22 @@ public:
 
 	void Init();
 	void RenderImgui();
-	void SetWindowSize(Vector2 size);
+	void SetWindowSize(float diameter);
 
 private:
 	void LoadSettingsFromFile();
 	void SaveSettingsToFile();
 
-public:
+public:	// (not in ImGui)
+
 	// App Settings
 	bool running = true;
-
-	// Window Settings
 	bool isOpen = false;
+	float windowDiameter = 640.f;
+
+public:	// Window Settings
 	bool alwaysOnTop = true;
 	int targetFps = 60;
-	float windowDiameter = 640.f;
 
 	// Pendulum Settings
 	float L1 = 150.0f;

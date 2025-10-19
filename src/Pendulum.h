@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Settings.h"
+#include "Trail.h"
 
 class Pendulum
 {
@@ -10,6 +11,7 @@ public:
 
 	void Update();
 	void Draw();
+	void ResizeTrailTexture(float diameter);
 
 private:
 	void RK4Step(double dt);
@@ -23,13 +25,17 @@ private:
 
 private:
 	Settings& s;
+	Trail t;
 
 	double a1, a2;	// angles of the pendulum bobs
 	double a1_v, a2_v;	// angular velocities of the bobs
 
 	double x1, y1;
 	double x2, y2;
+	double prev_x2, prev_y2;
 
 	double L1, L2;
+
+	bool firstFramePassed = false;
 };
 

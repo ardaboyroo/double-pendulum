@@ -1,10 +1,13 @@
 #include "Pendulum.h"
 
+#include "Trail.h"
+#include "raylib.h"
+
 #include <cmath>
 #include <iostream>
 
 Pendulum::Pendulum()
-	: s(Settings::Get()), 
+	: s(Settings::Get()),
 	a1(s.a1), a2(s.a2),
 	a1_v(0), a2_v(0)
 {
@@ -16,6 +19,9 @@ Pendulum::~Pendulum()
 
 void Pendulum::Update()
 {
+	prev_x2 = x2;
+	prev_y2 = y2;
+
 	if (!s.pausePhysics)
 		RK4Step(GetFrameTime());
 
@@ -27,6 +33,13 @@ void Pendulum::Update()
 
 void Pendulum::Draw()
 {
+	if (firstFramePassed)
+	{
+		t.DrawLine({ (float)prev_x2, (float)prev_y2 }, { (float)x2, (float)y2 });
+		t.Draw();
+	}
+	else firstFramePassed = true;
+
 	DrawCircle(GetScreenWidth() / 2, GetScreenHeight() / 2, s.bob1Thick, WHITE);
 
 	DrawLineEx({ GetScreenWidth() / 2.f, GetScreenHeight() / 2.f }, { (float)x1, (float)y1 }, s.L1Thick, WHITE);
@@ -34,6 +47,11 @@ void Pendulum::Draw()
 
 	DrawCircle(x1, y1, s.bob2Thick, DARKBLUE);
 	DrawCircle(x2, y2, s.bob3Thick, DARKGREEN);
+}
+
+void Pendulum::ResizeTrailTexture(float diameter)
+{
+	t.ResizeTextureArea({ diameter, diameter });
 }
 
 void Pendulum::RK4Step(double dt)

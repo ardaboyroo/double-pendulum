@@ -28,7 +28,6 @@ Settings& Settings::Get()
 
 void Settings::Init()
 {
-	std::print("init");
 	SetConfigFlags(
 		(alwaysOnTop ? FLAG_WINDOW_TOPMOST : 0)
 		| FLAG_WINDOW_TRANSPARENT
@@ -55,6 +54,7 @@ void Settings::Init()
 	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.2f, 0.2f, 0.2f, 1);
 	style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.15f, 0.15f, 0.15f, 1);
 
+
 	runOnStartup = IsAppInStartup("DoublePendulum");
 }
 
@@ -73,63 +73,72 @@ void Settings::RenderImgui()
 		ImGuiWindowFlags_NoCollapse
 	);
 
-	//if (ImGui::BeginTabBar("Settings"))
-	//{
-	//	if (ImGui::BeginTabItem("Canvas", ))
-	//	{
+	if (ImGui::BeginTabBar("Settings"))
+	{
+		if (ImGui::BeginTabItem("App"))
+		{
 			ImGui::Text(("FPS: " + std::to_string(ImGui::GetIO().Framerate)).c_str());
-	//		ImGui::EndTabItem();
-	//	}
-		if (ImGui::Button("Exit App")) running = false;
-	//	ImGui::EndTabBar();
-	//}
-	if (ImGui::Checkbox("Run on Startup", &runOnStartup))
-	{
-		if (runOnStartup)
-			AddAppToStartup("DoublePendulum");
-		else
-			RemoveAppFromStartup("DoublePendulum");
+			ImGui::SameLine();
+
+			ImGuiStyle& style = ImGui::GetStyle();
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, {10.f, 10.f});
+			ImGui::PushStyleColor(ImGuiCol_Button, { .85f,.0f,.0f,1});
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { .55f,.0f,.0f,1});
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x 
+				- ImGui::CalcTextSize("Exit App").x - style.ItemSpacing.x - style.FramePadding.x * 2);
+
+			if (ImGui::Button("Exit App")) running = false;
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor(2);
+
+			if (ImGui::Checkbox("Run on Startup", &runOnStartup))
+			{
+				if (runOnStartup)
+					AddAppToStartup("DoublePendulum");
+				else
+					RemoveAppFromStartup("DoublePendulum");
+			}
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Pendulum"))
+		{
+			ImGui::InputFloat("Length 1", &L1, 1.0f, 100.0f, "%.1f");
+			ImGui::InputFloat("Length 2", &L2, 1.0f, 100.0f, "%.1f");
+
+			ImGui::InputFloat("Length 1 Thickness", &L1Thick, 1.0f, 5.0f, "%.1f");
+			ImGui::InputFloat("Length 2 Thickness", &L2Thick, 1.0f, 5.0f, "%.1f");
+
+			ImGui::InputFloat("Bob 1 Thickness", &bob1Thick, 1.0f, 10.0f, "%.1f");
+			ImGui::InputFloat("Bob 2 Thickness", &bob2Thick, 1.0f, 10.0f, "%.1f");
+			ImGui::InputFloat("Bob 3 Thickness", &bob3Thick, 1.0f, 10.0f, "%.1f");
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Physics"))
+		{
+			ImGui::Checkbox("Pause Physics", &pausePhysics);
+
+			ImGui::InputFloat("Mass 1", &m1, 1.0f, 20.0f, "%.1f");
+			ImGui::InputFloat("Mass 2", &m2, 1.0f, 20.0f, "%.1f");
+
+			ImGui::EndTabItem();
+		}
+
+		//if (ImGui::CollapsingHeader("Pendulum Settings", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed))
+		//{
+		//}
+
+		ImGui::EndTabBar();
 	}
-
-	if (ImGui::CollapsingHeader("Pendulum Settings", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed))
-	{
-		ImGui::InputFloat("Length 1", &L1, 1.0f, 100.0f, "%.1f");
-		ImGui::InputFloat("Length 2", &L2, 1.0f, 100.0f, "%.1f");
-
-		ImGui::InputFloat("Mass 1", &m1, 1.0f, 20.0f, "%.1f");
-		ImGui::InputFloat("Mass 2", &m2, 1.0f, 20.0f, "%.1f");
-
-		ImGui::InputFloat("Length 1 Thickness", &L1Thick, 1.0f, 5.0f, "%.1f");
-		ImGui::InputFloat("Length 2 Thickness", &L2Thick, 1.0f, 5.0f, "%.1f");
-
-		ImGui::InputFloat("Bob 1 Thickness", &bob1Thick, 1.0f, 10.0f, "%.1f");
-		ImGui::InputFloat("Bob 2 Thickness", &bob2Thick, 1.0f, 10.0f, "%.1f");
-		ImGui::InputFloat("Bob 3 Thickness", &bob3Thick, 1.0f, 10.0f, "%.1f");
-	}
-
-	if (ImGui::CollapsingHeader("Physics Settings"))
-	{
-		ImGui::Checkbox("Pause Physics", &pausePhysics);
-	}
-
 	ImGui::End();
 }
 
-void Settings::SetWindowSize(Vector2 size)
+void Settings::SetWindowSize(float diameter)
 {
-	std::cout << "Before position: " << GetWindowPosition().x << "  " << GetWindowPosition().y << "\n";
-	std::cout << "Before size: " << windowDiameter << "  " << windowDiameter << "\n";
-	Vector2 displayPos = ::GetWindowPosition();
-	Vector2 delta = { size.x - windowDiameter, size.y - windowDiameter };
-	windowDiameter = size.x;
-
-	// Move window first
-	//::SetWindowPosition(displayPos.x - delta.x / 2, displayPos.y - delta.y / 2);
-
-	// Then resize
-	::CustomSetWindowSize(GetWindowHandle(), size.x, size.y);
-	std::cout << "After position: " << GetWindowPosition().x << "  " << GetWindowPosition().y << "\n";
-	std::cout << "After size: " << size.x << "  " << size.y << "\n";
+	windowDiameter = diameter;
+	::CustomSetWindowSize(GetWindowHandle(), diameter, diameter);
 }
 
 void Settings::LoadSettingsFromFile()
