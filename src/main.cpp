@@ -58,17 +58,15 @@ int main()
 		float pendulumRadius = s.L1 + s.L2 + s.bob3Thick;
 		if ((pendulumRadius * 2.f) + 50.0f > s.windowDiameter + 40.f)
 		{
-			// pendulum too big -> increase window
+			// pendulum too big -> increase window size
 			float radius = std::fmax(s.settingsSize.x / 2.0f, pendulumRadius + 25.0f);
 			s.SetWindowSize(radius * 2.0f);
-			myPendulum.ResizeTrailTexture(radius * 2.f);
 		}
 		else if (s.windowDiameter - (pendulumRadius * 2.f) > 80.0f && s.windowDiameter > s.settingsSize.x)
 		{
-			// pendulum comfortably smaller -> decrease window
+			// pendulum comfortably smaller -> decrease window size
 			float radius = std::fmax(s.settingsSize.x / 2.0f, pendulumRadius + 25.0f);
 			s.SetWindowSize(radius * 2.0f);
-			myPendulum.ResizeTrailTexture(radius * 2.f);
 		}
 
 		/////////////////

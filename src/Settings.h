@@ -51,6 +51,10 @@ public:	// Window Settings
 	float bob2Thick = 20.f;
 	float bob3Thick = 20.f;
 
+	int maxTrailSegments = 64;
+	float trailThickness = 2.f;
+	float trailColor[4] = {1.f, 0, 0, 1.f};
+
 	// Physics settings
 	bool pausePhysics = false;
 	float g = 9.81f;

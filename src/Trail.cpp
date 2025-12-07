@@ -1,52 +1,45 @@
 #include "Trail.h"
 
-#include <iostream>
-
 Trail::Trail()
 	: s(Settings::Get()),
-	previousWindowDiameter(s.windowDiameter),
-	trailTexture(LoadRenderTexture(s.windowDiameter, s.windowDiameter))
+	previousWindowDiameter(s.windowDiameter)
 {
-	BeginTextureMode(trailTexture);
-	ClearBackground(BLANK);
-	EndTextureMode();
 }
 
 Trail::~Trail()
 {
-	UnloadRenderTexture(trailTexture);
 }
 
 void Trail::Draw()
 {
-	DrawTextureRec(trailTexture.texture, 
-		{0, 0, (float)trailTexture.texture.width, -(float)trailTexture.texture.height}, 
-		{0, 0}, WHITE);
+	int count = (int)trail.size();
 
-	BeginTextureMode(trailTexture);
-	DrawRectangle(0, 0, s.windowDiameter, s.windowDiameter, Fade(BLACK, 0.02f));
-	EndTextureMode();
+	for (int i = 0; i < count; i++)
+	{
+		float t = (float)i / count;
+		unsigned char alpha = (unsigned char)(t * (s.trailColor[3] * 255.f));
+
+		Color faded = {
+			s.trailColor[0] * 255.f,
+			s.trailColor[1] * 255.f,
+			s.trailColor[2] * 255.f,
+			alpha
+		};
+
+		DrawLineEx(
+			trail[i].start,
+			trail[i].end,
+			s.trailThickness,
+			faded
+		);
+	}
 }
 
-void Trail::DrawLine(Vector2 start, Vector2 end)
+// TODO: make it framerate independent, probably through minimum trail segment length
+void Trail::AddLine(Vector2 start, Vector2 end)
 {
-	BeginTextureMode(trailTexture);
-	DrawLineEx(start, end, 2.f, RED);
-	EndTextureMode();
-}
+	trail.push_back({ start, end });
 
-void Trail::ResizeTextureArea(Vector2 size)
-{
-	std::cout << "loading new texturesize: " << size.x;
-	RenderTexture newTex = LoadRenderTexture(size.x, size.y);
-	BeginTextureMode(newTex);
-	ClearBackground(BLANK);
-	DrawTextureRec(trailTexture.texture, 
-		{ 0, 0, (float)trailTexture.texture.width, -(float)trailTexture.texture.height }, 
-		{ (s.windowDiameter - previousWindowDiameter) / 2.f, (s.windowDiameter - previousWindowDiameter)/2.f}, WHITE);
-	EndTextureMode();
-
-	UnloadRenderTexture(trailTexture);
-	trailTexture = newTex;
-	previousWindowDiameter = s.windowDiameter;
+	if ((int)trail.size() > s.maxTrailSegments)
+		trail.pop_front();
 }

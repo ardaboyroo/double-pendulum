@@ -53,7 +53,7 @@ void Settings::Init()
 	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.1f, 0.1f, 0.1f, 1);
 	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.2f, 0.2f, 0.2f, 1);
 	style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.15f, 0.15f, 0.15f, 1);
-
+	style.Colors[ImGuiCol_Button] = ImVec4(0.1f, 0.1f, 0.1f, 1);
 
 	runOnStartup = IsAppInStartup("DoublePendulum");
 }
@@ -105,13 +105,20 @@ void Settings::RenderImgui()
 		{
 			ImGui::InputFloat("Length 1", &L1, 1.0f, 100.0f, "%.1f");
 			ImGui::InputFloat("Length 2", &L2, 1.0f, 100.0f, "%.1f");
+			ImGui::Dummy({0, 20});
 
 			ImGui::InputFloat("Length 1 Thickness", &L1Thick, 1.0f, 5.0f, "%.1f");
 			ImGui::InputFloat("Length 2 Thickness", &L2Thick, 1.0f, 5.0f, "%.1f");
+			ImGui::Dummy({0, 20});
 
 			ImGui::InputFloat("Bob 1 Thickness", &bob1Thick, 1.0f, 10.0f, "%.1f");
 			ImGui::InputFloat("Bob 2 Thickness", &bob2Thick, 1.0f, 10.0f, "%.1f");
 			ImGui::InputFloat("Bob 3 Thickness", &bob3Thick, 1.0f, 10.0f, "%.1f");
+			ImGui::Dummy({0, 20});
+
+			ImGui::InputInt("Trail Length", &maxTrailSegments, 1, 10);
+			ImGui::InputFloat("Trail Thickness", &trailThickness, 1.f, 5.f, "%.1f");
+			ImGui::ColorEdit3("Trail Color", &trailColor[0], ImGuiColorEditFlags_NoDragDrop);
 
 			ImGui::EndTabItem();
 		}
@@ -119,6 +126,7 @@ void Settings::RenderImgui()
 		if (ImGui::BeginTabItem("Physics"))
 		{
 			ImGui::Checkbox("Pause Physics", &pausePhysics);
+			ImGui::Dummy({ 0, 20 });
 
 			ImGui::InputFloat("Mass 1", &m1, 1.0f, 20.0f, "%.1f");
 			ImGui::InputFloat("Mass 2", &m2, 1.0f, 20.0f, "%.1f");

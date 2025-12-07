@@ -143,6 +143,7 @@ bool IsAppInStartup(const std::string& appName)
 	return exists;
 }
 
+// This will trigger your anti virus!
 void AddAppToStartup(const std::string& appName)
 {
 	std::string exePath = GetOwnExePath();
@@ -154,6 +155,7 @@ void AddAppToStartup(const std::string& appName)
 	RegCloseKey(hKey);
 }
 
+// This will trigger your anti virus!
 void RemoveAppFromStartup(const std::string& appName)
 {
 	HKEY hKey;

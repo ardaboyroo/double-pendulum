@@ -11,7 +11,6 @@ public:
 
 	void Update();
 	void Draw();
-	void ResizeTrailTexture(float diameter);
 
 private:
 	void RK4Step(double dt);

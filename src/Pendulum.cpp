@@ -35,7 +35,7 @@ void Pendulum::Draw()
 {
 	if (firstFramePassed)
 	{
-		t.DrawLine({ (float)prev_x2, (float)prev_y2 }, { (float)x2, (float)y2 });
+		t.AddLine({ (float)prev_x2, (float)prev_y2 }, { (float)x2, (float)y2 });
 		t.Draw();
 	}
 	else firstFramePassed = true;
@@ -47,11 +47,6 @@ void Pendulum::Draw()
 
 	DrawCircle(x1, y1, s.bob2Thick, DARKBLUE);
 	DrawCircle(x2, y2, s.bob3Thick, DARKGREEN);
-}
-
-void Pendulum::ResizeTrailTexture(float diameter)
-{
-	t.ResizeTextureArea({ diameter, diameter });
 }
 
 void Pendulum::RK4Step(double dt)

@@ -3,6 +3,14 @@
 #include "raylib.h"
 #include "Settings.h"
 
+#include <deque>
+
+struct TrailLine
+{
+	Vector2 start;
+	Vector2 end;
+};
+
 class Trail
 {
 public:
@@ -10,11 +18,10 @@ public:
 	~Trail();
 
 	void Draw();
-	void DrawLine(Vector2 start, Vector2 end);
-	void ResizeTextureArea(Vector2 size);
+	void AddLine(Vector2 start, Vector2 end);
 
 private:
 	Settings& s;
 	float previousWindowDiameter;
-	RenderTexture trailTexture;
+	std::deque<TrailLine> trail;
 };
